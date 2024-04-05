@@ -18,11 +18,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Spanned
-import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.result.ActivityResult
@@ -71,7 +71,8 @@ class StudyOptionsFragment : Fragment(), Toolbar.OnMenuItemClickListener {
     private lateinit var deckInfoLayout: View
     private lateinit var buttonStart: Button
     private lateinit var textDeckName: TextView
-    private lateinit var textDeckDescription: TextView
+    private lateinit var webDeckDescription: WebView
+
     private lateinit var textTodayNew: TextView
     private lateinit var textTodayLrn: TextView
     private lateinit var textTodayRev: TextView
@@ -195,9 +196,9 @@ class StudyOptionsFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         }
         deckInfoLayout = studyOptionsView.findViewById(R.id.studyoptions_deckcounts)
         textDeckName = studyOptionsView.findViewById(R.id.studyoptions_deck_name)
-        textDeckDescription = studyOptionsView.findViewById(R.id.studyoptions_deck_description)
-        // make links clickable
-        textDeckDescription.movementMethod = LinkMovementMethod.getInstance()
+
+        webDeckDescription = studyOptionsView.findViewById(R.id.studyoptions_deck_description)
+
         buttonStart = studyOptionsView.findViewById(R.id.studyoptions_start)
         // Code common to both fragmented and non-fragmented view
         textTodayNew = studyOptionsView.findViewById(R.id.studyoptions_new)
@@ -585,11 +586,12 @@ class StudyOptionsFragment : Fragment(), Toolbar.OnMenuItemClickListener {
             } else {
                 col.decks.current().description
             }
+
             if (desc.isNotEmpty()) {
-                textDeckDescription.text = formatDescription(desc)
-                textDeckDescription.visibility = View.VISIBLE
+                webDeckDescription.loadDataWithBaseURL(null, desc, "text/html", "UTF-8", null)
+                webDeckDescription.visibility = View.VISIBLE
             } else {
-                textDeckDescription.visibility = View.GONE
+                webDeckDescription.visibility = View.GONE
             }
 
             // Set new/learn/review card counts
